@@ -37,6 +37,9 @@ with tf.variable_scope("lr_model"):
         # 3）合并变量
         merge = tf.summary.merge_all()
 
+        # 添加一个saver保存模型！！！！！！！！！！！！！！
+        saver = tf.train.Saver()#实例化
+
         # 初始化变量
         init = tf.global_variables_initializer()
         # 开启会话进行训练
@@ -44,17 +47,25 @@ with tf.variable_scope("lr_model"):
             # 运行初始化变量Op
             sess.run(init)
             print("随机初始化的权重为%f， 偏置为%f" % (weights.eval(), bias.eval()))
+            # 第2999步的误差为0  .000000，权重为0 .799999， 偏置为0 .700002
             # 1）创建事件文件【重要】
             file_writer = tf.summary.FileWriter(logdir="./summary", graph=sess.graph)
+
+            #加载历史模型
+            saver.restore(sess, "./summary/ckpt/linear/linear_regression.ckpt")
+
             # 训练模型
-            for i in range(100):
+            for i in range(1000):
                 sess.run(optimizer)
                 print("第%d步的误差为%f，权重为%f， 偏置为%f" % (i, error.eval(), weights.eval(), bias.eval()))
                 # 4）运行合并变量op
                 summary = sess.run(merge)
                 file_writer.add_summary(summary, i)#i保留每一次的数量
+                # 训练过程比较长，保存一下，只会保存最近的五个！！！！！！！！
+                saver.save(sess, "./summary/ckpt/linear/linear_regression.ckpt2")
 
-        return None
+
+
 
 if __name__ == '__main__':
     linear_regression()
