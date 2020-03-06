@@ -19,7 +19,7 @@ def linear_regression():
 
     ## 3.随机初始化w1和b1
     w_ran = tf.Variable(initial_value=tf.random_normal(shape=(1, 1)))
-    b_ran = tf.Variable(initial_value=tf.random_normal(shape=(1, 1)))
+    b_ran = tf.Variable(initial_value=tf.random_normal(shape=(1, 1)),trainable = True)#trainable = False就是大模型里面指定一些参数不被训练
     y_predict = tf.matmul(x, w_ran) + b_ran
 
     ## 4.确定损失函数（预测值与真实值之间的误差）即均方误差
@@ -40,7 +40,7 @@ def linear_regression():
         sess.run(init)
         print("随机初始化的权重为%f， 偏置为%f" % (w_ran.eval(), b_ran.eval()))
         # 训练模型
-        for i in range(2000):
+        for i in range(100):
             sess.run(optimizer)
             print("第%d步的误差为%f，权重为%f， 偏置为%f" % (i, error.eval(), w_ran.eval(), b_ran.eval()))
 if __name__ == '__main__':
